@@ -1,9 +1,6 @@
 import pygame
-
 from gomoku import Gomoku
-from gomoku.palette import COLOR_BLACK, COLOR_RED, COLOR_GRAY, \
-    COLOR_GREEN, COLOR_WHITE
-
+from gomoku.palette import COLOR_GRAY, COLOR_BLACK, COLOR_WHITE, COLOR_RED, COLOR_GREEN
 
 if __name__ == "__main__":
     pygame.init()
@@ -12,7 +9,7 @@ if __name__ == "__main__":
     stone = {}
     stone["white"], stone["black"] = [], []
     player1_score, player2_score = 0, 0
-    game = Gomoku()
+    game = Gomoku()  # instantiates the game, which draws out the board and sets the scores
     game.draw_main()
     game.draw_score(player1_score, player2_score)
 
@@ -31,7 +28,7 @@ if __name__ == "__main__":
                 game = Gomoku()
                 game.draw_main()
                 game.draw_score(player1_score, player2_score)
-                game.text_draw("GAME START", game.w_h//2, 30, COLOR_GREEN, 35)
+                game.text_draw("GAME START", game.w_h // 2, 30, COLOR_GREEN, 35)
                 play_order = True
 
             # Next game.
@@ -40,7 +37,7 @@ if __name__ == "__main__":
                 game = Gomoku()
                 game.draw_main()
                 game.draw_score(player1_score, player2_score)
-                game.text_draw("NEXT GAME START", game.w_h//2, 30, COLOR_GREEN, 35)
+                game.text_draw("NEXT GAME START", game.w_h // 2, 30, COLOR_GREEN, 35)
                 play_order = True
 
             # Draw a white stone (Player 1).
@@ -51,17 +48,36 @@ if __name__ == "__main__":
                                COLOR_RED, 20)
                 game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
                                COLOR_BLACK, 20)
+
                 if 45 <= x_stone <= game.w_h and 45 <= y_stone <= game.w_h:
+
+
                     x_stone, y_stone = game.play_draw_stone_pos()
                     stone, play_order = game.play_draw_stone(
                         stone, play_order, "white", COLOR_WHITE,
                         x_stone, y_stone)
+
+                    '''
+                    best_move = mcts_ai_make_move(game, stone, play_order, num_simulations=100)
+        
+                    # Extract the x, y coordinates from the best AI move
+                    x_stone, y_stone = best_move
+        
+                    # Apply Player 2's move (black)
+                    stone, play_order = game.play_draw_stone(
+                        stone, play_order, "black", COLOR_BLACK, x_stone, y_stone
+                    )
+                    '''
+
+
                     game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
                                    COLOR_GRAY, 20)
                     game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
                                    COLOR_RED, 20)
                     player1_score, play_order = game.score(
                         stone, "white", player1_score, play_order)
+
+                    # stop if draw and all the spaces are full
                     if len(stone["white"]) + len(stone["black"]) == 225:
                         game.text_draw("DRAW", 45 * 16 + 65, game.w_h // 2 + 120,
                                        (200, 0, 0), 45)
@@ -69,10 +85,12 @@ if __name__ == "__main__":
 
             # Draw a black stone (Player 2).
             elif play_order:
+
                 game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
                                COLOR_GRAY, 20)
                 game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
                                COLOR_RED, 20)
+
                 if 45 <= x_stone <= game.w_h and 45 <= y_stone <= game.w_h:
                     x_stone, y_stone = game.play_draw_stone_pos()
                     stone, play_order = game.play_draw_stone(
@@ -84,8 +102,9 @@ if __name__ == "__main__":
                     player2_score, play_order = game.score(
                         stone, "black", player2_score, play_order)
                     if len(stone["white"]) + len(stone["black"]) == 225:
-                        game.text_draw("DRAW", 45 * 16 + 65, game.w_h//2 + 120,
+                        game.text_draw("DRAW", 45 * 16 + 65, game.w_h // 2 + 120,
                                        (200, 0, 0), 45)
                         play_order = None
+
         game.interactive_button()
         pygame.display.update()

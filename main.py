@@ -1,6 +1,9 @@
+import random
+
 import pygame
 from gomoku import Gomoku
-from gomoku.palette import COLOR_GRAY, COLOR_BLACK, COLOR_WHITE, COLOR_RED, COLOR_GREEN
+import gomoku.mcts
+from gomoku.palette import COLOR_BLACK, COLOR_RED, COLOR_GRAY, COLOR_GREEN, COLOR_WHITE
 
 if __name__ == "__main__":
     pygame.init()
@@ -13,7 +16,26 @@ if __name__ == "__main__":
     game.draw_main()
     game.draw_score(player1_score, player2_score)
 
-    play_order = None
+    play_order = True  # Start with player's turn
+
+
+    def check_win(stone, color, player_score, player_order):
+        print('run check win method')
+        """
+        Checks if a player has won by examining the current board state.
+        """
+        # Implement the win-checking logic based on the current board (stone dict)
+        # It should check if there are 5 consecutive stones of the same color.
+        # For now, let's assume you have such a method implemented.
+        return game.score(stone, color, player_score, player_order)[2]  # Example, modify as needed
+
+    def reset_game():
+        """
+        Resets the game board for the next round.
+        """
+        stone["white"], stone["black"] = [], []
+        game.draw_main()
+        game.draw_score(player1_score, player2_score)
 
     while True:
         event = pygame.event.poll()
@@ -21,7 +43,7 @@ if __name__ == "__main__":
 
             x_stone, y_stone = game.play_get_pos()
 
-            # New game.
+            # New game reset
             if (125 + 45 * 16) > x_stone > 45 * 16 and 90 > y_stone > 45:
                 stone["white"], stone["black"] = [], []
                 player1_score, player2_score = 0, 0
@@ -30,81 +52,55 @@ if __name__ == "__main__":
                 game.draw_score(player1_score, player2_score)
                 game.text_draw("GAME START", game.w_h // 2, 30, COLOR_GREEN, 35)
                 play_order = True
+                print(play_order)
+                print("game start")
 
-            # Next game.
-            if (125 + 45 * 16) > x_stone > 45 * 16 and 160 > y_stone > 115:
-                stone["white"], stone["black"] = [], []
-                game = Gomoku()
-                game.draw_main()
-                game.draw_score(player1_score, player2_score)
-                game.text_draw("NEXT GAME START", game.w_h // 2, 30, COLOR_GREEN, 35)
-                play_order = True
+            # If player is trying to place a stone.
+            if 45 <= x_stone <= game.w_h and 45 <= y_stone <= game.w_h:
 
-            # Draw a white stone (Player 1).
-            if play_order is None:
-                pass
-            elif not play_order:
-                game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
-                               COLOR_RED, 20)
-                game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
-                               COLOR_BLACK, 20)
-
-                if 45 <= x_stone <= game.w_h and 45 <= y_stone <= game.w_h:
-
-
+                if play_order:  # Player 1's turn (white stone)
+                    print("==============\n" + 'human turn')
                     x_stone, y_stone = game.play_draw_stone_pos()
                     stone, play_order = game.play_draw_stone(
-                        stone, play_order, "white", COLOR_WHITE,
-                        x_stone, y_stone)
-
-                    '''
-                    best_move = mcts_ai_make_move(game, stone, play_order, num_simulations=100)
-        
-                    # Extract the x, y coordinates from the best AI move
-                    x_stone, y_stone = best_move
-        
-                    # Apply Player 2's move (black)
-                    stone, play_order = game.play_draw_stone(
-                        stone, play_order, "black", COLOR_BLACK, x_stone, y_stone
+                        stone, play_order, "white", COLOR_WHITE, x_stone, y_stone
                     )
-                    '''
+                    print(str(play_order) + 'why')
+                    print('p1')
+                    print(x_stone, y_stone)
 
+                    if check_win(stone, "white", player1_score, play_order):
+                        print('1 won')
+                        player1_score += 1
+                        game.text_draw("PLAYER 1 WINS!", 45 * 16 + 65, game.w_h // 2 + 120, COLOR_RED, 45)
+                        game.draw_score(player1_score, player2_score)
+                        reset_game()
+                    print(play_order)
 
-                    game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
-                                   COLOR_GRAY, 20)
-                    game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
-                                   COLOR_RED, 20)
-                    player1_score, play_order = game.score(
-                        stone, "white", player1_score, play_order)
+                else:  # AI's turn (black stone)
+                    print('====================\n'  +  'AI turn ')
+                    best_move = gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)#(random.randint(90, 500), random.randint(90,500)) #gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)
+                    print(str(best_move))
+                    if best_move is not None:
+                        x_stone, y_stone = best_move
+                        print('seq 1')
+                        stone, play_order = game.play_draw_stone(
+                            stone, play_order, "black", COLOR_BLACK, x_stone, y_stone
+                        )
+                        print('seq 2')
+                        print(play_order)
+                        print('p2')
 
-                    # stop if draw and all the spaces are full
-                    if len(stone["white"]) + len(stone["black"]) == 225:
-                        game.text_draw("DRAW", 45 * 16 + 65, game.w_h // 2 + 120,
-                                       (200, 0, 0), 45)
-                        play_order = None
+                        if check_win(stone, "black", player2_score, play_order):
+                            player2_score += 1
+                            game.text_draw("PLAYER 2 WINS!", 45 * 16 + 65, game.w_h // 2 + 120, COLOR_RED, 45)
+                            game.draw_score(player1_score, player2_score)
+                            reset_game()
 
-            # Draw a black stone (Player 2).
-            elif play_order:
-
-                game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
-                               COLOR_GRAY, 20)
-                game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
-                               COLOR_RED, 20)
-
-                if 45 <= x_stone <= game.w_h and 45 <= y_stone <= game.w_h:
-                    x_stone, y_stone = game.play_draw_stone_pos()
-                    stone, play_order = game.play_draw_stone(
-                        stone, play_order, "black", COLOR_BLACK, x_stone, y_stone)
-                    game.text_draw("PLAYER 1", 45 * 16 + 65, game.w_h // 2 - 90,
-                                   COLOR_RED, 20)
-                    game.text_draw("PLAYER 2", 45 * 16 + 65, game.w_h // 2 + 20,
-                                   COLOR_BLACK, 20)
-                    player2_score, play_order = game.score(
-                        stone, "black", player2_score, play_order)
-                    if len(stone["white"]) + len(stone["black"]) == 225:
-                        game.text_draw("DRAW", 45 * 16 + 65, game.w_h // 2 + 120,
-                                       (200, 0, 0), 45)
-                        play_order = None
+                # Check if it's a draw (if board is full)
+                if len(stone["white"]) + len(stone["black"]) == 225:
+                    game.text_draw("DRAW", 45 * 16 + 65, game.w_h // 2 + 120, (200, 0, 0), 45)
+                    reset_game()
 
         game.interactive_button()
         pygame.display.update()
+

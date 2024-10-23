@@ -1,4 +1,5 @@
 import pygame
+import copy
 
 # Colors
 COLOR_BLACK = (0, 0, 0)
@@ -16,6 +17,8 @@ class Gomoku:
         self.screen = pygame.display.set_mode((900, self.w_h + 45))
         pygame.display.set_caption(self.title)
         self.screen.fill(COLOR_BOARD)
+
+
 
     def draw_main(self, x=45*16, y=45, w=125, h=45,
                   button_color=COLOR_BUTTON, ac_button_color=COLOR_AC_BUTTON):
@@ -128,9 +131,18 @@ class Gomoku:
             pygame.draw.circle(self.screen, self.stone_color,
                                (self.x_stone, self.y_stone), 45//2)
             self.stone[self.color_name].append((self.x_stone, self.y_stone))
-            if self.play_order: self.play_order = False
-            else: self.play_order = True
+            if self.play_order:
+                print('white turn end, black turn start')
+                self.play_order = False
+            else:
+                print('black turn end, white turn start')
+                self.play_order = True
+        print('drew something')
         return self.stone, self.play_order
+
+
+
+
 
     def score(self, stone, color_name, player_score, play_order):
         self.stone, self.color_name, self.player_score = stone, color_name, player_score
@@ -151,7 +163,8 @@ class Gomoku:
                             self.result = True
                             break
 
-                    else: break
+                    else:
+                        break
 
                 cnt = 0
                 for i in range(1, 5):
@@ -184,12 +197,17 @@ class Gomoku:
                             break
 
         if self.result:
+            print('someone won')
+            print(self.result)
             if self.color_name == "white":
                 self.text_draw("WIN", 45 * 16 + 65, self.w_h // 2 - 120,
                                (100, 100, 100), 45)
+                print('white won')
 
             elif self.color_name == "black":
                 self.text_draw("WIN", 45 * 16 + 65, self.w_h//2 + 120,
                                COLOR_BLACK, 45)
+                print('black won')
+        print(str(self.result) + 'vhecked for wins')
 
-        return self.player_score, self.play_order
+        return self.player_score, self.play_order, self.result

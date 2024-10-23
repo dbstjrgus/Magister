@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 '''
 Dataset from https://gomocup.org/results/
+Data preprocessing using os 
 '''
 game_rule = 'Freestyle' # Freestyle, Fastgame, Standard, Renju
 base_path = '/Users/25yoon/PycharmProjects/magister/gomocup2019results'
@@ -16,7 +17,7 @@ file_list = glob(os.path.join(base_path, '%s*/*.psq' % (game_rule, )))
 for index, file_path in enumerate(tqdm(file_list)):
     with open(file_path, 'r') as f:
         lines = f.read().splitlines() 
-
+    # coordinates, and im dropping the first line
     w, h = lines[0].split(' ')[1].strip(',').split('x')
     w, h = int(w), int(h)
 

@@ -1,5 +1,6 @@
 import pygame
 import copy
+import numpy as np
 
 # Colors
 COLOR_BLACK = (0, 0, 0)
@@ -17,6 +18,7 @@ class Gomoku:
         self.screen = pygame.display.set_mode((900, self.w_h + 45))
         pygame.display.set_caption(self.title)
         self.screen.fill(COLOR_BOARD)
+
 
 
 
@@ -138,10 +140,12 @@ class Gomoku:
             if self.play_order:
                 print('white turn end, black turn start')
                 self.play_order = False
+
             else:
                 print('black turn end, white turn start')
                 self.play_order = True
         print('drew something')
+
         return self.stone, self.play_order
 
 

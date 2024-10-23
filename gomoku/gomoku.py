@@ -137,6 +137,7 @@ class Gomoku:
             pygame.draw.circle(self.screen, self.stone_color,
                                (self.x_stone, self.y_stone), 45//2)
             self.stone[self.color_name].append((self.x_stone, self.y_stone))
+
             if self.play_order:
                 print('white turn end, black turn start')
                 self.play_order = False

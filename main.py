@@ -10,26 +10,34 @@ import numpy as np
 
 if __name__ == "__main__":
     pygame.init()
-    pygame.font.init()
+    pygame.font.init()  # initialize pygame
 
-    stone = {}
+    stone = {}  # dictionary of stones with their color and location
     stone["white"], stone["black"] = [], []
-    player1_score, player2_score = 0, 0
+    player1_score, player2_score = 0, 0  # keep track f score
     game = Gomoku()  # instantiates the game, which draws out the board and sets the scores
-    game.draw_main()
+    game.draw_main()  # draw the board
     game.draw_score(player1_score, player2_score)
-    m1 = load_model('/Users/25yoon/PycharmProjects/magister/gomoku/img/models/20201213_202430.h5')
+    m1 = load_model('/Users/25yoon/PycharmProjects/magister/gomoku/img/models/20241022_170057.keras')
 
     play_order = True  # Start with player's turn
-    def get_ai_move_again(board_state):
-        new_board_state = np.pad(board_state, ((2,3), (2,3)), mode = 'constant', constant_values = 0)
-        res = new_board_state.reshape(1,20,20,1)
+
+
+    def get_ai_move_again(board_state):  # use this model
+        new_board_state = np.pad(board_state, ((2, 3), (2, 3)), mode='constant', constant_values=0)
+        res = new_board_state.reshape(1, 20, 20, 1)
         y_pred = m1.predict(res).squeeze()  # get rid of that one dimension
         y_pred = y_pred.reshape(20, 20)
         x, y = np.unravel_index(np.argmax(y_pred), y_pred.shape)
-        return int(45 + (45 * x)),int(45 + (45 * y))
+        if x >= 15:
+            x =14
+        if y >= 15:
+            y = 14
 
-    def check_win(stone, color, player_score, player_order):
+        return int(45 + (45 * x)), int(45 + (45 * y))
+
+
+    def check_win(stone, color, player_score, player_order):  # uses directionals to see if stones align
         print('run check win method')
         """
         Checks if a player has won by examining the current board state.
@@ -39,6 +47,7 @@ if __name__ == "__main__":
         # For now, let's assume you have such a method implemented.
         return game.score(stone, color, player_score, player_order)[2]  # Example, modify as needed
 
+
     def reset_game():
         """
         Resets the game board for the next round.
@@ -46,6 +55,7 @@ if __name__ == "__main__":
         stone["white"], stone["black"] = [], []
         game.draw_main()
         game.draw_score(player1_score, player2_score)
+
 
     while True:
         event = pygame.event.poll()
@@ -80,7 +90,6 @@ if __name__ == "__main__":
                     print(x_stone, y_stone)
                     board_state[int((x_stone - 45) / 45)][int((y_stone - 45) / 45)] = 1
 
-
                     if check_win(stone, "white", player1_score, play_order):
                         print('1 won')
                         player1_score += 1
@@ -91,11 +100,23 @@ if __name__ == "__main__":
 
 
                 else:  # AI's turn (black stone)
-                    print('====================\n'  +  'AI turn ')
+                    print('====================\n' + 'AI turn ')
 
-
-                    #best_move = gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)#(random.randint(90, 500), random.randint(90,500)) #gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)
+                    # best_move = gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)  #(random.randint(90, 500), random.randint(90,500)) #gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)
                     best_move = get_ai_move_again(board_state)
+                    print(stone)
+                    for tup in stone['black']:
+                        if tup == best_move:
+                            best_move = (random.randint(0,15), random.randint(0,15))
+                            best_move = int(45 + (45 * best_move[0])), int(45 + (45 * best_move[1]))
+
+                        break
+
+
+
+
+
+
                     print(str(best_move))
                     if best_move is not None:
                         x_stone, y_stone = best_move
@@ -121,4 +142,3 @@ if __name__ == "__main__":
 
         game.interactive_button()
         pygame.display.update()
-

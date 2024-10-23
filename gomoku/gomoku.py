@@ -23,7 +23,7 @@ class Gomoku:
     def draw_main(self, x=45*16, y=45, w=125, h=45,
                   button_color=COLOR_BUTTON, ac_button_color=COLOR_AC_BUTTON):
 
-        # Gomoku board.
+        # drawing Gomoku board.
         for i in range(1, 16):
             pygame.draw.line(self.screen, COLOR_BLACK,
                              [45 * i, 45], [45 * i, self.w_h], 2)
@@ -32,6 +32,7 @@ class Gomoku:
         pygame.draw.circle(self.screen, COLOR_BLACK, [45 * 8, 45 * 8], 8)
 
     def draw_score(self, player1_score, player2_score):
+        # drawing the score for who won, I abandoned this method because it was so hard
         self.player1_score, self.player2_score = player1_score, player2_score
         # Score.
         self.text_draw("PLAYER 1", 45 * 16 + 65, self.w_h // 2 - 90,
@@ -102,11 +103,13 @@ class Gomoku:
         return textSurface, textSurface.get_rect()
 
     def play_get_pos(self):
+        # ithis gets the position of the mouse
         self.x_stone, self.y_stone = pygame.mouse.get_pos()
 
         return self.x_stone, self.y_stone
 
     def play_draw_stone_pos(self):
+        # this draws the position of the stone and returns it
         if self.x_stone % 45 > 23:
             self.x_stone = (self.x_stone - self.x_stone % 45) + 45
         else:
@@ -122,6 +125,7 @@ class Gomoku:
     def play_draw_stone(self, stone, play_order, color_name, stone_color, x_stone, y_stone):
         self.stone, self.play_order, self.color_name = stone, play_order, color_name
         self.stone_color, self.x_stone, self.y_stone = stone_color, x_stone, y_stone
+        # this draws the actual stone circle
 
         if (self.x_stone, self.y_stone) in self.stone["white"]:
             pass
@@ -145,6 +149,8 @@ class Gomoku:
 
 
     def score(self, stone, color_name, player_score, play_order):
+        # checks for a win
+        # uses a dictionary and sorts the coordinates to make sure if the stones are aligned in any sort of direction
         self.stone, self.color_name, self.player_score = stone, color_name, player_score
         self.play_order = play_order
         self.result = None

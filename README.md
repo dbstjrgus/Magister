@@ -11,7 +11,8 @@ I made a Gomoku AI. The AI part is pretty self explanatory. It is supposed to pl
 After the loss of Lee Sae Dol against AlphaGo in 2016, what most people don't know is that Google had two more deepmind AIs developed. Maister (p) and Magister (p). They each went 33 - 0 and 35 - 0 (i think) on the largest online Baduk platform, beating the best players in the world like it was nothing. 
 That is why I decided to name my project Magister. 
 
-To be completely honest, I tried reinforcement learning and failed. 
+To be completely honest, I tried reinforcement learning and failed. There are also some print statements to help me debug
+
 
 ## How to run
 ```bash
@@ -53,4 +54,7 @@ Also, I took code from a few people and some from CHATGPT. I was inspired by thi
 I also made a cnn model and took one of his pretrained model to compare performances. I modified his neural network to make mine because his was way too complex for my macbook, so I simplified layers to detect more local patterns instead of the whole board, most notably making my convolution matrixes size 3 and not 7. That part I got help from CHATGPT. 
 
 I also used some of his preprocessing data, and then wrangled it to work with my pygame, since he was using a package called ursina which was a lot nicer but I had to work within project parametres. 
+
+Another person I got help from was this dude Qi Wang. 
+I used his blog from here https://www.harrycodes.com/blog/monte-carlo-tree-search to learn how the tree search works and how to implement it. 
 

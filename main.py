@@ -76,6 +76,7 @@ if __name__ == "__main__":
                         reset_game()
                     print(play_order)
 
+
                 else:  # AI's turn (black stone)
                     print('====================\n'  +  'AI turn ')
                     best_move = gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)#(random.randint(90, 500), random.randint(90,500)) #gomoku.mcts.mcts_ai_make_move(game, stone, play_order, num_simulations=100)

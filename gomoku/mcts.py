@@ -8,6 +8,11 @@ import copy
 define node class that will be used to represent game states and the overall structure of the search tree 
 different from depth first search because this one balances exploration and exploitation
 '''
+'''
+code and theory inspired from 
+https://www.harrycodes.com/blog/monte-carlo-tree-search
+
+'''
 
 COLOR_BLACK = (0,0,0)
 COLOR_WHITE = (255,255,255)

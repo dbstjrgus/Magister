@@ -61,5 +61,5 @@ for index, file_path in enumerate(tqdm(file_list)):
         # update board
         board[y-1, x-1] = player
 
-    # save dataset
+    # save dataset, npz is a special way of storing numpy arrays so that they can be compacted into a single file
     np.savez_compressed(os.path.join(output_path, '%s.npz' % (str(index).zfill(5))), inputs=inputs, outputs=outputs)
